@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Birthday Surprise</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        /* Animated Background Gradient */
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Timer Box */
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        h3 { font-style: italic; opacity: 0.9; }
+
+        #timer {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .unit { font-size: 1.2rem; margin-right: 15px; opacity: 0.7; }
+
+        /* Start Button */
+        #startBtn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            background: white;
+            color: #ff9a9e;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        #startBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="birthdaySong" loop>
+        <source src="happy-birthday-357371 (1).mp3">
+    </audio>
+
+    <div class="container">
+        <h1>🎉 COUNTING DOWN FOR YOUR SPECIAL DAY 🎉</h1>
+        <h3>💕 You mean more to me than anyone else 💕</h3>
+        
+        <div id="timer">00d 00h 00m 00s</div>
+
+        <button id="startBtn" onclick="initiateCountdown()">START THE MAGIC</button>
+    </div>
+
+    <script>
+        // 1. SET YOUR TARGET DATE HERE
+        // Example: "December 31, 2025 23:59:59"
+        const targetDate = new Date("December 31, 2025 23:59:59").getTime();
+
+        function initiateCountdown() {
+            // Hide the button and play music (User interaction allows audio)
+            document.getElementById('startBtn').style.display = 'none';
+            const song = document.getElementById("birthdaySong");
+            song.play();
+
+            const countdownFunction = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                // Time calculations
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Update the timer display
+                document.getElementById("timer").innerHTML = 
+                    days + "<span class='unit'>d</span> " + 
+                    hours + "<span class='unit'>h</span> " + 
+                    minutes + "<span class='unit'>m</span> " + 
+                    seconds + "<span class='unit'>s</span> ";
+
+                // When the countdown hits zero
+                if (distance < 0) {
+                    clearInterval(countdownFunction);
+                    document.getElementById("timer").innerHTML = "HAPPY BIRTHDAY! ❤️";
+                    document.querySelector("h3").innerHTML = "Today is all about you!";
+                    
+                    // Trigger continuous confetti
+                    triggerConfetti();
+                }
+            }, 1000);
+        }
+
+        function triggerConfetti() {
+            var end = Date.now() + (15 * 1000); // 15 seconds of confetti
+
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff9a9e', '#fad0c4']
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#a1c4fd', '#c2e9fb']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+    </script>
+</body>
+</html>
